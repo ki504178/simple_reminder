@@ -96,35 +96,18 @@ class _CreateRemindState extends State<CreateRemind> {
     Fluttertoast.showToast(msg: '予定を作成しました。');
   }
 
+  final remindJustBeforeMinute = -30;
+  final remindPreviousDay = -1;
+
   void _scheduleNotification(String title, DateTime dateTime) {
     final tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
 
-    if (dateTime.difference(nowJp()).inMinutes > 30) {
+    if (nowJp().difference(dateTime).inMinutes <= remindJustBeforeMinute) {
       _notify30Minute(title, tzDateTime);
     }
-    if (dateTime.difference(nowJp()).inDays > 0) {
+    if (nowJp().difference(dateTime).inDays <= remindPreviousDay) {
       _notifyPreviousDay(title, tzDateTime);
     }
-  }
-
-  void _notifyPreviousDay(String title, tz.TZDateTime dateTime) {
-    final localNotify = FlutterLocalNotificationsPlugin();
-    localNotify.zonedSchedule(
-      0,
-      title,
-      '前日リマインダー',
-      dateTime.add(const Duration(days: -1)),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'previousDay',
-          '前日リマインダー',
-        ),
-        iOS: IOSNotificationDetails(),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
   }
 
   void _notify30Minute(String title, tz.TZDateTime dateTime) {
@@ -133,10 +116,29 @@ class _CreateRemindState extends State<CreateRemind> {
       0,
       title,
       '[直前] 30分前リマインダー',
-      dateTime.add(const Duration(minutes: -30)),
+      dateTime.add(Duration(minutes: remindJustBeforeMinute)),
       const NotificationDetails(
-        android: AndroidNotificationDetails('30Minute', '30分前リマインダー',
-            icon: 'calender_aseru_woman'),
+        android: AndroidNotificationDetails('30Minute', '30分前リマインダー'),
+        iOS: IOSNotificationDetails(),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  void _notifyPreviousDay(String title, tz.TZDateTime dateTime) {
+    final localNotify = FlutterLocalNotificationsPlugin();
+    localNotify.zonedSchedule(
+      0,
+      title,
+      '前日リマインダー',
+      dateTime.add(Duration(days: remindPreviousDay)),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'previousDay',
+          '前日リマインダー',
+        ),
         iOS: IOSNotificationDetails(),
       ),
       androidAllowWhileIdle: true,
@@ -170,7 +172,7 @@ class _CreateRemindState extends State<CreateRemind> {
                   color: Colors.blue,
                 ),
                 Text(
-                  'リマインドは予定日時の前日、30分前に通知されます。',
+                  'リマインドは予定日時前日と、30分前に通知されます。',
                   style: TextStyle(
                     color: Colors.blue,
                   ),
@@ -199,9 +201,10 @@ class _CreateRemindState extends State<CreateRemind> {
                     children: [
                       Flexible(
                           child: TextField(
+                        readOnly: true,
+                        onTap: () => _setDate(context),
                         controller: TextEditingController(
                             text: dateFormat.format(_targetDate)),
-                        readOnly: true,
                         decoration: const InputDecoration(
                           labelText: '日付は？',
                         ),
@@ -215,11 +218,12 @@ class _CreateRemindState extends State<CreateRemind> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Expanded(
+                      Flexible(
                           child: TextField(
+                        readOnly: true,
+                        onTap: () => _setTime(context),
                         controller: TextEditingController(
                             text: timeFormat.format(_targetTime)),
-                        readOnly: true,
                         decoration: const InputDecoration(
                           labelText: '時間は？',
                         ),
