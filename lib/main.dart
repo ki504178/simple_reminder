@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // ローカル通知設定初期化
     localNotify.initialize(const InitializationSettings(
-      android: AndroidInitializationSettings('calender_woman'),
+      android: AndroidInitializationSettings('@mipmap/ic_stat_access_alarm'),
       iOS: IOSInitializationSettings(),
     ));
   }
@@ -80,29 +80,55 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<Widget> _remindList(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
+    final keys = prefs.getKeys().toList();
     if (keys.isEmpty) {
       return SizedBox(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Flexible(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Center(
+              child: Flexible(
                 child: Icon(
                   Icons.notifications_active,
                   color: Colors.red,
                   size: 100.0,
                 ),
               ),
-              Flexible(child: Text('忘れがちな予定をサクッと追加して、\nリマインドで気付けるようにしましょう！！')),
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Flexible(
+                  child: Text(
+                '''このアプリはアカウント登録やログイン不要です。
+忘れがちな予定をサクッと追加して、
+リマインドで気付けるようにてくれます。
+先ずは + ボタンからリマインドしたい予定を追加しましょう！！''',
+                style: TextStyle(),
+              )),
+            ),
+          ],
         ),
       );
     }
 
-    keys.toList().sort((a, b) => b.compareTo(a));
+    // 予定が近い順にソート
+    keys.sort((a, b) {
+      var listA = prefs.getStringList(a);
+      var listB = prefs.getStringList(b);
+      if (listA is List<String> && listB is List<String>) {
+        final dateTimeA = DateTime.parse(_formatDateTime(listA) + ':00');
+        final dateTimeB = DateTime.parse(_formatDateTime(listB) + ':00');
+
+        return dateTimeA.compareTo(dateTimeB);
+      }
+
+      // 本来は入らないけどコンパイルエラー回避のため
+      return 0;
+    });
+
     return ListView(
         children: keys.map((key) {
       var list = prefs.getStringList(key);
@@ -112,11 +138,11 @@ class _MyHomePageState extends State<MyHomePage> {
         final remainingHour = dateTime.difference(nowJp()).inHours;
         final remainingMinute = dateTime.difference(nowJp()).inMinutes;
         final remainingMessage = remainingHour.clamp(1, 23) == remainingHour
-            ? '残り 約 $remainingHour 時間'
+            ? '予定まで 約 $remainingHour 時間'
             : remainingHour >= 24
-                ? '残り 約 ${dateTime.difference(DateTime.now()).inDays} 日'
+                ? '予定まで 約 ${dateTime.difference(DateTime.now()).inDays} 日'
                 : remainingMinute > 0 && remainingMinute < 60
-                    ? '残り 約 $remainingMinute 分'
+                    ? '予定まで 約 $remainingMinute 分'
                     : remainingMinute == 0
                         ? '予定時間です'
                         : '予定時間を過ぎています';
