@@ -60,6 +60,18 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.4
 
+  flutter_launcher_icons:
+    # TODO：https://github.com/fluttercommunity/flutter_launcher_icons/issues/316 が閉じたらVerしていする
+    git:
+      url: https://github.com/Davenchy/flutter_launcher_icons.git
+      ref: fixMinSdkParseFlutter2.8
+
+# アプリアイコン
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/calender_aseru_woman.png"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -86,7 +98,7 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
-  # example:
+  # simple_reminder:
   # fonts:
   #   - family: Schyler
   #     fonts:
