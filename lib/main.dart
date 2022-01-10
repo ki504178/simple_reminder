@@ -7,6 +7,7 @@ import 'package:sample/components/templates/create_remind.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'components/molucules/confirm_dialog.dart';
 
@@ -244,7 +245,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           Fluttertoast.showToast(msg: 'すべての予定を削除しました。');
                         },
                       )),
-            )
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip),
+              title: const Text('プライバシーポリシー'),
+              onTap: () async {
+                await launch('https://ki504178.github.io/simple_reminder/');
+              },
+            ),
           ],
         ),
       ),
