@@ -110,15 +110,22 @@ class _CreateRemindState extends State<CreateRemind> {
     }
   }
 
+  final notifyTitle = 'Simple Reminder';
+
   void _notify30Minute(String title, tz.TZDateTime dateTime) {
     final localNotify = FlutterLocalNotificationsPlugin();
     localNotify.zonedSchedule(
       0,
-      title,
-      '[直前] 30分前リマインダー',
+      notifyTitle,
+      '[30分前] $title',
       dateTime.add(Duration(minutes: remindJustBeforeMinute)),
       const NotificationDetails(
-        android: AndroidNotificationDetails('30Minute', '30分前リマインダー'),
+        android: AndroidNotificationDetails(
+          '30Minute',
+          '30分前リマインダー',
+          priority: Priority.high,
+          importance: Importance.high,
+        ),
         iOS: IOSNotificationDetails(),
       ),
       androidAllowWhileIdle: true,
@@ -131,8 +138,8 @@ class _CreateRemindState extends State<CreateRemind> {
     final localNotify = FlutterLocalNotificationsPlugin();
     localNotify.zonedSchedule(
       0,
-      title,
-      '前日リマインダー',
+      notifyTitle,
+      '[前日] $title',
       dateTime.add(Duration(days: remindPreviousDay)),
       const NotificationDetails(
         android: AndroidNotificationDetails(
