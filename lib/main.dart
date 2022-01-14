@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Reminder',
       theme: ThemeData(
         primarySwatch: Colors.red,
@@ -84,6 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final keys = prefs.getKeys().toList();
     if (keys.isEmpty) {
       return SizedBox(
+        width: 500,
+        height: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -105,9 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text(
                 '''このアプリはアカウント登録やログイン不要です。
 忘れがちな予定をサクッと追加して、
-リマインドで気付けるようにてくれます。
+リマインドで気付けるようにしてくれます。
 先ずは + ボタンからリマインドしたい予定を追加しましょう！！''',
-                style: TextStyle(),
               )),
             ),
           ],
@@ -168,6 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     content: '選択した予定($title)を削除します。よろしいですか？',
                     onPressedOk: () {
                       prefs.remove(key);
+                      localNotify.cancel(key.hashCode);
 
                       context.read<NotifyModel>().notify();
                       Navigator.pop(context);
@@ -214,7 +217,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   DateTime.parse(dateTimeStr + ':00');
                               final remainingSecond =
                                   dateTime.difference(nowJp()).inSeconds;
-                              if (remainingSecond <= 0) prefs.remove(key);
+                              if (remainingSecond <= 0) {
+                                prefs.remove(key);
+                                localNotify.cancel(key.hashCode);
+                              }
                             } else {
                               throw Exception(
                                   'システム異常：SharedPreferenceにkey($key)はあるがデータがList<String>ではない');
@@ -238,6 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressedOk: () async {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
+                          localNotify.cancelAll();
 
                           context.read<NotifyModel>().notify();
                           Navigator.pop(context);

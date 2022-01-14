@@ -90,7 +90,7 @@ class _CreateRemindState extends State<CreateRemind> {
 
     await prefs.setStringList(key, [_title, saveDate, saveTime]);
 
-    _scheduleNotification(_title, saveDateTime);
+    _scheduleNotification(key.hashCode, _title, saveDateTime);
 
     Navigator.pop(context, true);
     Fluttertoast.showToast(msg: '予定を作成しました。');
@@ -99,23 +99,23 @@ class _CreateRemindState extends State<CreateRemind> {
   final remindJustBeforeMinute = -30;
   final remindPreviousDay = -1;
 
-  void _scheduleNotification(String title, DateTime dateTime) {
+  void _scheduleNotification(int id, String title, DateTime dateTime) {
     final tzDateTime = tz.TZDateTime.from(dateTime, tz.local);
 
     if (nowJp().difference(dateTime).inMinutes <= remindJustBeforeMinute) {
-      _notify30Minute(title, tzDateTime);
+      _notify30Minute(id, title, tzDateTime);
     }
     if (nowJp().difference(dateTime).inDays <= remindPreviousDay) {
-      _notifyPreviousDay(title, tzDateTime);
+      _notifyPreviousDay(id, title, tzDateTime);
     }
   }
 
   final notifyTitle = 'Simple Reminder';
 
-  void _notify30Minute(String title, tz.TZDateTime dateTime) {
+  void _notify30Minute(int id, String title, tz.TZDateTime dateTime) {
     final localNotify = FlutterLocalNotificationsPlugin();
     localNotify.zonedSchedule(
-      0,
+      id,
       notifyTitle,
       '[30分前] $title',
       dateTime.add(Duration(minutes: remindJustBeforeMinute)),
@@ -134,10 +134,10 @@ class _CreateRemindState extends State<CreateRemind> {
     );
   }
 
-  void _notifyPreviousDay(String title, tz.TZDateTime dateTime) {
+  void _notifyPreviousDay(int id, String title, tz.TZDateTime dateTime) {
     final localNotify = FlutterLocalNotificationsPlugin();
     localNotify.zonedSchedule(
-      0,
+      id,
       notifyTitle,
       '[前日] $title',
       dateTime.add(Duration(days: remindPreviousDay)),
