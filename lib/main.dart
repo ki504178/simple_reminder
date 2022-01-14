@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Reminder',
       theme: ThemeData(
         primarySwatch: Colors.red,
@@ -107,9 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text(
                 '''このアプリはアカウント登録やログイン不要です。
 忘れがちな予定をサクッと追加して、
-リマインドで気付けるようにてくれます。
+リマインドで気付けるようにしてくれます。
 先ずは + ボタンからリマインドしたい予定を追加しましょう！！''',
-                style: TextStyle(),
               )),
             ),
           ],
