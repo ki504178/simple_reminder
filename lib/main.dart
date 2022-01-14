@@ -170,6 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     content: '選択した予定($title)を削除します。よろしいですか？',
                     onPressedOk: () {
                       prefs.remove(key);
+                      localNotify.cancel(key.hashCode);
 
                       context.read<NotifyModel>().notify();
                       Navigator.pop(context);
@@ -216,7 +217,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   DateTime.parse(dateTimeStr + ':00');
                               final remainingSecond =
                                   dateTime.difference(nowJp()).inSeconds;
-                              if (remainingSecond <= 0) prefs.remove(key);
+                              if (remainingSecond <= 0) {
+                                prefs.remove(key);
+                                localNotify.cancel(key.hashCode);
+                              }
                             } else {
                               throw Exception(
                                   'システム異常：SharedPreferenceにkey($key)はあるがデータがList<String>ではない');
@@ -240,6 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressedOk: () async {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
+                          localNotify.cancelAll();
 
                           context.read<NotifyModel>().notify();
                           Navigator.pop(context);
