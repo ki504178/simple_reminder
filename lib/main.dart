@@ -84,6 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final keys = prefs.getKeys().toList();
     if (keys.isEmpty) {
       return SizedBox(
+        width: 500,
+        height: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
