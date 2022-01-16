@@ -191,18 +191,26 @@ class _CreateRemindState extends State<CreateRemind> {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Flexible(
+                  GestureDetector(
+                      onTap: () {
+                        // 日付など他の入力を変更した後にフォーカスが外れないため追加
+                        final currentScope = FocusScope.of(context);
+                        if (!currentScope.hasPrimaryFocus &&
+                            currentScope.hasFocus) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        }
+                      },
                       child: TextField(
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      labelText: '何をする予定？',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _title = value;
-                      });
-                    },
-                  )),
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          labelText: '何をする予定？',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _title = value;
+                          });
+                        },
+                      )),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
