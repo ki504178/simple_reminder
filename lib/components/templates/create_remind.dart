@@ -182,6 +182,7 @@ class _CreateRemindState extends State<CreateRemind> {
                   'リマインドは予定日時前日と、30分前に通知されます。',
                   style: TextStyle(
                     color: Colors.blue,
+                    fontSize: 12,
                   ),
                 ),
               ],
